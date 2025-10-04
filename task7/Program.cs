@@ -2,6 +2,7 @@
 {
     private static void Main(string[] args)
     {
+        //Первоначальный ввод данных
         Console.Write("Введите n: ");
         double n = double.Parse(Console.ReadLine());
         Console.Write("Введите a: ");
@@ -13,37 +14,54 @@
         Console.Write("Введите h: ");
         int h = int.Parse(Console.ReadLine());
 
+        // d - ширина защитного поля, maxD - максимальное подходящее значение d, canPlace - проверка на возможность размещения модулей с заданным значением d
         int d = 0;
-        int sumH;
-        int sumW;
-        int nInWidth = (int)n;
-        int nInHeight = (int)Math.Ceiling(n/nInWidth);
-        do
+        int maxD = -1;
+        bool canPlace;
+
+        while (true)
         {
-            d++;
+            canPlace = false;
 
-            sumH = nInHeight * (b + 2 * d);
-            sumW = nInWidth * (a + 2 * d);
-
-            int p = 0;
-
-            while (w < sumW)
+            //Перебор вариантов размещения модулей(обычный и повёрнутый)
+            for (int variant = 0; variant < 2; variant++)
             {
-                nInWidth--;
-                sumW = nInWidth * (a + 2 * d);
-                sumH = nInHeight * (b + 2 * d);
+                int varA = a;
+                int varB = b;
+                if (variant == 1)
+                {
+                    varA = b;
+                    varB = a;
+                }
+                //Перебор количества модулей для размещения в ширину 
+                for (int nInWidth = (int)n; nInWidth > 0; nInWidth--)
+                {
+                    int nInHeight = (int)Math.Ceiling(n / nInWidth);
+                    int sumW = (varA + 2 * d) * nInWidth;
+                    int sumH = (varB + 2 * d) * nInHeight;
+                    //Если условие выполняется это значит что модули расставлены верно и не выходят за границы поля
+                    if (sumW <= w && sumH <= h)
+                    {
+                        maxD = d;
+                        canPlace = true;
+                        Console.WriteLine($"{nInWidth}x{nInHeight} при d = {d} и варианте {variant}");
+                    }
+                }
             }
 
-            Console.WriteLine($"d = {d}. Суммарная ширина равна {sumW}, а суммарная высота равна {sumH}. " +
-                $"Получилось поле размером {nInWidth}x{nInHeight} модулей (суммарно {nInWidth + nInHeight} модулей)");
-            //if(((nInHeight * (b + 2 * (d+1)) * (nInWidth * (a + 2 * (d+1))))) > (w * h))
-            //{
-            //    Console.WriteLine("При следующей итерации сумма площадей модулей будет большей площади площадки.");
-            //    Environment.Exit(0);
-            //}
+            //Проверка на возможность размещения защитного поля в целом
+            if (canPlace == false && maxD == -1)
+            {
+                Console.WriteLine("Размещение модулей невозможно даже без защитного поля.");
+                Environment.Exit(0);
+            }
+            else if(canPlace == false && maxD != -1)
+            {
+                Console.WriteLine($"Максимально возможная ширина защитного поля d = {maxD}.");
+                Environment.Exit(0);
+            }
 
-            int q = 0;
+            d++;
         }
-        while ((w * h) > (sumW * sumH));
     }
 }
