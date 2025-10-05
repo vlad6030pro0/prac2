@@ -17,7 +17,7 @@
             antibStrong--;
 
             hours++;
-
+            if (bacterias < 0) bacterias = 0;
             Console.WriteLine($"После {hours} часа бактерий осталось {bacterias}");
         }
     }
